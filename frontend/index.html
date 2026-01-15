@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookmark Manager</title>
+
+    <!-- Tailwind CSS + DaisyUI -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.4.19/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="min-h-screen bg-base-200">
+
+    <!-- Navbar -->
+    <div class="navbar bg-base-100 shadow-lg">
+        <div class="flex-1">
+            <a class="btn btn-ghost text-xl gap-2">
+                <i data-lucide="bookmark" class="w-6 h-6"></i>
+                Bookmark Manager
+            </a>
+        </div>
+        <div class="flex-none gap-2" id="navbar-actions">
+            <!-- Theme toggle -->
+            <label class="swap swap-rotate btn btn-ghost btn-circle">
+                <input type="checkbox" id="theme-toggle" />
+                <i data-lucide="sun" class="swap-off w-5 h-5"></i>
+                <i data-lucide="moon" class="swap-on w-5 h-5"></i>
+            </label>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container mx-auto px-4 py-8 max-w-2xl">
+
+        <!-- Auth Section -->
+        <div id="auth-section">
+            <div class="card bg-base-100 shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title justify-center text-2xl mb-4">
+                        <i data-lucide="log-in" class="w-6 h-6"></i>
+                        <span id="auth-title">Login</span>
+                    </h2>
+
+                    <!-- Alert for messages -->
+                    <div id="auth-message" class="hidden"></div>
+
+                    <!-- Email Input -->
+                    <div class="form-control w-full">
+                        <label class="label">
+                            <span class="label-text">Email</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="bg-base-300">
+                                <i data-lucide="mail" class="w-5 h-5"></i>
+                            </span>
+                            <input type="email" id="email" placeholder="you@example.com"
+                                   class="input input-bordered w-full" />
+                        </div>
+                    </div>
+
+                    <!-- Password Input -->
+                    <div class="form-control w-full mt-4">
+                        <label class="label">
+                            <span class="label-text">Password</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="bg-base-300">
+                                <i data-lucide="lock" class="w-5 h-5"></i>
+                            </span>
+                            <input type="password" id="password" placeholder="Min 6 characters"
+                                   class="input input-bordered w-full" />
+                            <button type="button" class="btn btn-ghost" onclick="togglePassword()">
+                                <i data-lucide="eye" id="eye-icon" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Auth Button -->
+                    <div class="card-actions justify-center mt-6">
+                        <button id="auth-btn" class="btn btn-primary w-full gap-2" onclick="handleAuth()">
+                            <i data-lucide="log-in" class="w-5 h-5"></i>
+                            <span>Login</span>
+                        </button>
+                    </div>
+
+                    <!-- Toggle Link -->
+                    <div class="divider">OR</div>
+                    <p class="text-center">
+                        <span id="toggle-text">Don't have an account?</span>
+                        <a href="#" id="toggle-link" class="link link-primary" onclick="toggleAuthMode()">Sign Up</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- App Section (Hidden initially) -->
+        <div id="app-section" class="hidden space-y-6">
+
+            <!-- User Info Card -->
+            <div class="card bg-base-100 shadow-xl">
+                <div class="card-body py-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="avatar placeholder">
+                                <div class="bg-primary text-primary-content rounded-full w-10">
+                                    <i data-lucide="user" class="w-5 h-5"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="text-sm text-base-content/70">Logged in as</p>
+                                <p class="font-semibold" id="user-email"></p>
+                            </div>
+                        </div>
+                        <button class="btn btn-error btn-sm gap-2" onclick="handleLogout()">
+                            <i data-lucide="log-out" class="w-4 h-4"></i>
+                            Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div role="tablist" class="tabs tabs-boxed bg-base-100 p-1">
+                <button role="tab" class="tab tab-active gap-2" id="tab-add" onclick="switchTab('add')">
+                    <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                    Add Bookmark
+                </button>
+                <button role="tab" class="tab gap-2" id="tab-list" onclick="switchTab('list')">
+                    <i data-lucide="bookmark" class="w-4 h-4"></i>
+                    My Bookmarks
+                    <span class="badge badge-primary badge-sm" id="bookmark-count">0</span>
+                </button>
+            </div>
+
+            <!-- Tab Content: Add Bookmark -->
+            <div id="tab-content-add" class="card bg-base-100 shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title gap-2">
+                        <i data-lucide="plus-circle" class="w-6 h-6 text-primary"></i>
+                        Add New Bookmark
+                    </h2>
+
+                    <!-- Form Message -->
+                    <div id="form-message" class="hidden"></div>
+
+                    <!-- URL Input with Favicon Preview -->
+                    <div class="form-control w-full">
+                        <label class="label">
+                            <span class="label-text">URL *</span>
+                        </label>
+                        <div class="flex items-center gap-3">
+                            <div id="favicon-preview" class="hidden">
+                                <img id="favicon-img" src="" alt=""
+                                     class="w-10 h-10 rounded-lg bg-base-300 p-1"
+                                     onerror="this.parentElement.classList.add('hidden')" />
+                            </div>
+                            <input type="url" id="url" placeholder="https://example.com"
+                                   class="input input-bordered flex-1" />
+                        </div>
+                    </div>
+
+                    <!-- Title Input -->
+                    <div class="form-control w-full mt-4">
+                        <label class="label">
+                            <span class="label-text">Title *</span>
+                        </label>
+                        <input type="text" id="title" placeholder="Bookmark title"
+                               class="input input-bordered w-full" />
+                    </div>
+
+                    <!-- Notes Input -->
+                    <div class="form-control w-full mt-4">
+                        <label class="label">
+                            <span class="label-text">Notes (optional)</span>
+                        </label>
+                        <textarea id="notes" placeholder="Add some notes..."
+                                  class="textarea textarea-bordered h-24"></textarea>
+                    </div>
+
+                    <!-- Save Button -->
+                    <div class="card-actions justify-end mt-4">
+                        <button class="btn btn-primary gap-2" onclick="addBookmark()">
+                            <i data-lucide="save" class="w-5 h-5"></i>
+                            Save Bookmark
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Content: My Bookmarks -->
+            <div id="tab-content-list" class="hidden card bg-base-100 shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title gap-2">
+                        <i data-lucide="bookmark" class="w-6 h-6 text-primary"></i>
+                        My Bookmarks
+                    </h2>
+
+                    <!-- Search Input -->
+                    <div class="form-control w-full mt-2">
+                        <div class="input-group">
+                            <span class="bg-base-300">
+                                <i data-lucide="search" class="w-5 h-5"></i>
+                            </span>
+                            <input type="text" id="search-input" placeholder="Search bookmarks..."
+                                   class="input input-bordered w-full" oninput="handleSearch()" />
+                        </div>
+                    </div>
+
+                    <div id="bookmarks-list" class="mt-4 space-y-3">
+                        <!-- Bookmarks will be loaded here -->
+                        <div class="flex justify-center py-8">
+                            <span class="loading loading-spinner loading-lg"></span>
+                        </div>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div id="pagination" class="flex justify-center items-center gap-2 mt-6">
+                        <button class="btn btn-sm btn-ghost" id="btn-prev" onclick="changePage(-1)" disabled>
+                            <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                            Previous
+                        </button>
+                        <span class="text-sm">
+                            Page <span id="current-page">1</span> of <span id="total-pages">1</span>
+                        </span>
+                        <button class="btn btn-sm btn-ghost" id="btn-next" onclick="changePage(1)">
+                            Next
+                            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Bookmark Modal -->
+    <dialog id="edit-modal" class="modal">
+        <div class="modal-box">
+            <h3 class="font-bold text-lg flex items-center gap-2">
+                <i data-lucide="edit" class="w-6 h-6 text-primary"></i>
+                Edit Bookmark
+            </h3>
+            <div class="py-4 space-y-4">
+                <div class="form-control w-full">
+                    <label class="label">
+                        <span class="label-text">Title *</span>
+                    </label>
+                    <input type="text" id="edit-title" placeholder="Bookmark title"
+                           class="input input-bordered w-full" />
+                </div>
+                <div class="form-control w-full">
+                    <label class="label">
+                        <span class="label-text">URL *</span>
+                    </label>
+                    <input type="url" id="edit-url" placeholder="https://example.com"
+                           class="input input-bordered w-full" />
+                </div>
+                <div class="form-control w-full">
+                    <label class="label">
+                        <span class="label-text">Notes (optional)</span>
+                    </label>
+                    <textarea id="edit-notes" placeholder="Add some notes..."
+                              class="textarea textarea-bordered h-24"></textarea>
+                </div>
+            </div>
+            <div class="modal-action">
+                <form method="dialog">
+                    <button class="btn btn-ghost">Cancel</button>
+                </form>
+                <button class="btn btn-primary gap-2" id="confirm-edit-btn">
+                    <i data-lucide="save" class="w-4 h-4"></i>
+                    Save Changes
+                </button>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop">
+            <button>close</button>
+        </form>
+    </dialog>
+
+    <!-- Delete Confirmation Modal -->
+    <dialog id="delete-modal" class="modal">
+        <div class="modal-box">
+            <h3 class="font-bold text-lg flex items-center gap-2">
+                <i data-lucide="alert-triangle" class="w-6 h-6 text-warning"></i>
+                Confirm Delete
+            </h3>
+            <p class="py-4">Are you sure you want to delete this bookmark? This action cannot be undone.</p>
+            <div class="modal-action">
+                <form method="dialog">
+                    <button class="btn btn-ghost">Cancel</button>
+                </form>
+                <button class="btn btn-error gap-2" id="confirm-delete-btn">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    Delete
+                </button>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop">
+            <button>close</button>
+        </form>
+    </dialog>
+
+    <!-- Toast Container -->
+    <div class="toast toast-end" id="toast-container"></div>
+
+    <!-- JavaScript -->
+    <script src="js/config.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

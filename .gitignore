@@ -1,0 +1,30 @@
+# Environment variables (contains secrets)
+.env
+.env.local
+.env.*.local
+
+# Never commit these
+*.pem
+*.key
+credentials.json
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor folders
+.vscode/
+.idea/
+
+# Node modules (if you add npm packages later)
+node_modules/
+
+# Supabase temp files
+supabase/.temp/
+
+# Windows artifacts
+nul
+
+# Local dev server files (not needed for deployment)
+frontend/server.js
+frontend/package.json

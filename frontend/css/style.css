@@ -1,0 +1,152 @@
+/* Custom styles for Bookmark Manager */
+
+/* Smooth transitions for theme switching */
+* {
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Input group styling fix for DaisyUI */
+.input-group {
+    display: flex;
+    align-items: stretch;
+}
+
+.input-group > span {
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+    border: 1px solid hsl(var(--bc) / 0.2);
+    border-right: none;
+    border-radius: var(--rounded-btn, 0.5rem) 0 0 var(--rounded-btn, 0.5rem);
+}
+
+.input-group > input {
+    border-radius: 0 var(--rounded-btn, 0.5rem) var(--rounded-btn, 0.5rem) 0;
+}
+
+/* Bookmark item hover effect */
+.bookmark-item {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bookmark-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Loading state for buttons */
+.btn-loading {
+    pointer-events: none;
+}
+
+.btn-loading::before {
+    content: '';
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid transparent;
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    margin-right: 0.5rem;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* URL text overflow */
+.bookmark-url {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+    display: block;
+}
+
+/* Empty state styling */
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: hsl(var(--bc) / 0.5);
+}
+
+.empty-state i {
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+/* Toast animations */
+.toast .alert {
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Card entrance animation */
+.card {
+    animation: fadeInUp 0.4s ease;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+    .navbar .btn-ghost.text-xl {
+        font-size: 1rem;
+    }
+
+    .flex.gap-2 {
+        flex-direction: column;
+    }
+
+    .flex.gap-2 > button {
+        width: 100%;
+    }
+}
+
+/* Focus states for accessibility */
+.input:focus,
+.textarea:focus,
+.btn:focus {
+    outline: none;
+    ring: 2px;
+    ring-offset: 2px;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: hsl(var(--b2));
+}
+
+::-webkit-scrollbar-thumb {
+    background: hsl(var(--bc) / 0.2);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--bc) / 0.4);
+}
